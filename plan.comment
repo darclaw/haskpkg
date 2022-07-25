@@ -1,0 +1,42 @@
+Try user based package managment.
+
+Each task that a package could do differently have it enter and record into a shell, then write those commands to file and copy to metadata directory
+
+
+Structure
+metaDataDir/
+    Package/
+        package.get
+        package.update
+        package.build
+        package.install
+        package.test
+        package.remove
+        package.shortInfo
+        package.longInfo
+        package.patches/
+
+metaData creation Environment stuff:
+    onEnter: 
+        create jail -- only allow few packages to be seen, so that user must install dependencies
+        create user
+        su into user
+        make srcdir
+        cd srcdir
+        set history env variable
+    inside: 
+        special commands
+            envPkgInstall pkgName
+                -- while inside environment links in the needed package from system
+                -- if not installed, calls haskpkg (Get pkgName :&&: Build pkgName :&&: Install pkgName)
+            envFileEdit file
+                -- copies file to tmp
+                -- calls the editor on file
+                -- on editor exit creates patch file for file and saves it to package.patches
+                -- when this is writen to metaFile, is replaced with the patch (patch file)
+            envTest cmd
+                -- runs command that is deleted from history
+    onExit: 
+        convert history file to metafile
+        have user edit metafile
+        save metafile into the metaData structure
